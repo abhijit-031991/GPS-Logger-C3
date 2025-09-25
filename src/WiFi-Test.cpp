@@ -1,38 +1,59 @@
 // #include <WiFi.h>
+// #include <WebServer.h>
+// #include "esp_wifi.h"
+// #include "esp_netif.h"
 
-// const wifi_power_t powerLevels[] = {
-//   WIFI_POWER_2dBm,
-//   WIFI_POWER_5dBm,
-//   WIFI_POWER_7dBm,
-//   WIFI_POWER_11dBm,
-//   WIFI_POWER_13dBm,
-//   WIFI_POWER_15dBm,
-//   WIFI_POWER_17dBm,
-//   WIFI_POWER_19_5dBm
-// };
-
-// const char* powerLabels[] = {
-//   "2dBm", "5dBm", "7dBm", "11dBm", "13dBm", "15dBm", "17dBm", "19.5dBm"
-// };
+// const char* ssid     = "ArcTrack-Passkey";
+// const char* password = "password";
 
 // void setup() {
 //   Serial.begin(115200);
 //   delay(500);
 
-//   for (int i = 0; i < sizeof(powerLevels) / sizeof(powerLevels[0]); i++) {
-//     Serial.printf("\n🚦 Testing TX power: %s\n", powerLabels[i]);
-//     WiFi.mode(WIFI_OFF);
-//     delay(100);
-//     WiFi.mode(WIFI_AP);
-//     WiFi.setTxPower(powerLevels[i]);
-//     WiFi.softAP("C3Test", "12345678");
-//     Serial.println("✅ AP started at: " + WiFi.softAPIP().toString());
-//     delay(5000);  // Hold for 5 seconds
+//   Serial.println();
+//   Serial.println("Simple WiFi Connect");
 
-//     // Optionally: blink LED, measure heap, do a ping, etc.
+//   WiFi.mode(WIFI_STA);         // station mode
+//   WiFi.disconnect(true);       // clear previous config
+//   delay(100);
+
+//   Serial.printf("Connecting to %s\n", ssid);
+//   WiFi.begin(ssid, password);
+//   esp_wifi_set_max_tx_power(34);
+
+//   unsigned long start = millis();
+//   while (WiFi.status() != WL_CONNECTED && millis() - start < 15000) {
+//     Serial.print(".");
+//     delay(500);
 //   }
 
-//   Serial.println("\n✅ Completed all power levels.");
+//   if (WiFi.status() == WL_CONNECTED) {
+//     Serial.println("\n✅ Connected!");
+//     Serial.print("IP: ");
+//     Serial.println(WiFi.localIP());
+//     Serial.print("RSSI: ");
+//     Serial.print(WiFi.RSSI());
+//     Serial.println(" dBm");
+//   } else {
+//     Serial.println("\n❌ Failed to connect (timeout)");
+//   }
 // }
 
-// void loop() {}
+// void loop() {
+//   // Basic watchdog-friendly reconnect logic
+//   static unsigned long lastCheck = 0;
+//   if (millis() - lastCheck > 5000) {
+//     lastCheck = millis();
+//     if (WiFi.status() != WL_CONNECTED) {
+//       Serial.println("WiFi lost. Reconnecting...");
+//       WiFi.disconnect(true);
+//       WiFi.begin(ssid, password);
+//     } else {
+//       Serial.print("Alive. IP: ");
+//       Serial.print(WiFi.localIP());
+//       Serial.print(" RSSI: ");
+//       Serial.print(WiFi.RSSI());
+//       Serial.println(" dBm");
+//     }
+//   }
+// }
